@@ -1,15 +1,18 @@
 grep-locate
 ===========
-
 Faster, user-space oriented locate and updatedb.
+
+Running as Root
+---------------
+
 System wide usage as root may expose "hidden" files.
-For system wide, make sure to set XDG_DATA_HOME to some meaningful
-location.
+When run as root the db will be written to /var/lib/glocate/glocate.db
+if users don't have their own db, they will use this one.
 
 Ignoring Directories
 ---------------------
 
-To ignore certain directories, you can set a global /etc/updatedb-ignore
+To ignore certain dirs, you can set a global /etc/updatedb-ignore
 which contains full paths to directories; they must not be files.
-the user can also use \$XDG_CONFIG_HOME/updatedb-ignore or
-\$HOME/.config/updatedb-ignore to accomplish the same thing.
+the user can also use $XDG_CONFIG_HOME/updatedb-ignore or
+$HOME/.config/updatedb-ignore to accomplish the same thing.

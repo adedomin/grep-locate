@@ -15,8 +15,8 @@
 #
 # Faster, user-space oriented locate and updatedb.
 # System wide usage as root may expose "hidden" files.
-# For system wide, amke sure to set XDG_DATA_HOME to some meaningful
-# location.
+# System wide usage (root) will store the db in /var/lib.
+# if users don't have their own db, they will use this one.
 #
 # To ignore certain dirs, you can set a global /etc/updatedb-ignore
 # which contains full paths to directories; they must not be files.
@@ -30,10 +30,14 @@ if [[ "$1" == '-h' || "$1" == '--help' ]]; then
     exit 1
 fi
 
-if [[ -n "$XDG_DATA_HOME" ]]; then
-    DB_PATH="$XDG_DATA_HOME/glocate.db"
+if [[ -n "$XDG_DATA_HOME" && "$UID" != 0 ]]; then
+    DB_PATH="$XDG_DATA_HOME/glocate/glocate.db"
 else
-    DB_PATH="${HOME:?}/.local/share/glocate.db"
+    if [[ "$UID" == '0' ]]; then
+        DB_PATH="/var/lib/glocate/glocate.db"
+    else
+        DB_PATH="${HOME:?}/.local/share/glocate/glocate.db"
+    fi
 fi
 
 if ! type "lz4" > /dev/null; then
@@ -43,7 +47,7 @@ else
 fi
 
 if [[ "$0" == *updatedb ]]; then
-    mkdir -p "${DB_PATH%/*}"
+    mkdir -p "${DB_PATH%/*}" 2>/dev/null
     IGN_DIRS=()
     while read -r dir; do
         IGN_DIRS+=("-o" "-path" "$dir" "-prune")
@@ -64,8 +68,11 @@ if [[ "$0" == *updatedb ]]; then
 fi
 
 if [[ ! -f "$DB_PATH" ]]; then
-    echo "Error: Run this command as updatedb first." >&2
-    exit 1
+    if [[ ! -f "/var/lib/glocate/glocate.db" ]]; then
+        echo "Error: Run this command as updatedb first." >&2
+        exit 1
+    fi
+    DB_PATH="/var/lib/glocate/glocate.db"
 fi
 
 "$COMPRESS" -dc "$DB_PATH" | grep -z "$@" - | tr '\0' '\n'
