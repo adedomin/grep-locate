@@ -9,7 +9,7 @@ location.
 Ignoring Directories
 ---------------------
 
-To ignore certain dirs, you can set a global /etc/updatedb-ignore
+To ignore certain directories, you can set a global /etc/updatedb-ignore
 which contains full paths to directories; they must not be files.
-the user can also use \$XDG_CONFIG_HOME/.updatedb-ignore or
-\$HOME/.updatedb-ignore to accomplish the same thing.
+the user can also use \$XDG_CONFIG_HOME/updatedb-ignore or
+\$HOME/.config/updatedb-ignore to accomplish the same thing.
