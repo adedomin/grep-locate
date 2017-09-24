@@ -32,12 +32,10 @@ fi
 
 if [[ -n "$XDG_DATA_HOME" && "$UID" != 0 ]]; then
     DB_PATH="$XDG_DATA_HOME/glocate/glocate.db"
+elif [[ "$UID" == '0' ]]; then
+    DB_PATH="/var/lib/glocate/glocate.db"
 else
-    if [[ "$UID" == '0' ]]; then
-        DB_PATH="/var/lib/glocate/glocate.db"
-    else
-        DB_PATH="${HOME:?}/.local/share/glocate/glocate.db"
-    fi
+    DB_PATH="${HOME:?}/.local/share/glocate/glocate.db"
 fi
 
 if ! type "lz4" > /dev/null; then
